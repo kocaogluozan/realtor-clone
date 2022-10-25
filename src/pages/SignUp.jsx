@@ -3,19 +3,31 @@ import React, { useState } from "react";
 //import icons
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 
-//import Link
-import { Link } from "react-router-dom";
+//import Link,useNavigate
+import { Link, useNavigate } from "react-router-dom";
 
 //import components
 import OAuth from "../components/OAuth";
 
+//import toast
+import { toast } from "react-toastify";
+
+//firebase
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase";
+import { serverTimestamp, setDoc, doc } from "firebase/firestore";
+
 const SignUp = () => {
+  //Getting data from the signup form:
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
-
   const { name, email, password } = formData;
 
   const onChange = (e) => {
@@ -23,10 +35,44 @@ const SignUp = () => {
       ...prevState,
       [e.target.id]: e.target.value,
     }));
-    console.log(formData);
   };
 
+  //Password visibility:
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      //Adding the name to user profile
+      updateProfile(auth.currentUser, { displayName: name });
+
+      //Remove password from the formdata:
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+
+      //Adding the user to firestore database:
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
+
+      //Go to home page after sign up:
+      navigate("/");
+
+      //Toast notification
+      toast.success("Signed up successfully!");
+    } catch (error) {
+      toast.error("Something went wrong with the registration!");
+    }
+  };
   return (
     <section>
       <h1 className="text-3xl text-center font-bold mt-6 ">Sign Up</h1>
@@ -41,7 +87,7 @@ const SignUp = () => {
         </div>
         {/************ FORM ************/}
         <div className="w-full lg:w-[40%] md:w-[67%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             <input
               className="w-full px-4 py-2 text-xl text-gray-700 bg-white 
                       border-gray-300 rounded transition ease-in-out mb-6"
@@ -101,22 +147,22 @@ const SignUp = () => {
                 </Link>
               </p>
             </div>
-          </form>
-
-          <button
-            className="w-full bg-blue-600 text-white px-7 py-3 text-sm 
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white px-7 py-3 text-sm 
                       font-medium uppercase rounded shadow-md hover:bg-blue-700 
                       transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800"
-          >
-            Sign up
-          </button>
-          <div
-            className="py-4 flex items-center before:border-t before:border-gray-300 
+            >
+              Sign up
+            </button>
+            <div
+              className="py-4 flex items-center before:border-t before:border-gray-300 
                           before:flex-1 after:border-t after:border-gray-300 after:flex-1"
-          >
-            <p className="text-center font-semibold mx-4">OR</p>
-          </div>
-          <OAuth />
+            >
+              <p className="text-center font-semibold mx-4">OR</p>
+            </div>
+            <OAuth />
+          </form>
         </div>
       </div>
     </section>

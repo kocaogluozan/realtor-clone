@@ -57,22 +57,21 @@ const ForgotPassword = () => {
                 </Link>
               </p>
             </div>
-          </form>
-
-          <button
-            className="w-full bg-blue-600 text-white px-7 py-3 text-sm 
+            <button
+              className="w-full bg-blue-600 text-white px-7 py-3 text-sm 
                       font-medium uppercase rounded shadow-md hover:bg-blue-700 
                       transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800"
-          >
-            Send reset password
-          </button>
-          <div
-            className="py-4 flex items-center before:border-t before:border-gray-300 
+            >
+              Send reset password
+            </button>
+            <div
+              className="py-4 flex items-center before:border-t before:border-gray-300 
                           before:flex-1 after:border-t after:border-gray-300 after:flex-1"
-          >
-            <p className="text-center font-semibold mx-4">OR</p>
-          </div>
-          <OAuth />
+            >
+              <p className="text-center font-semibold mx-4">OR</p>
+            </div>
+            <OAuth />
+          </form>
         </div>
       </div>
     </section>

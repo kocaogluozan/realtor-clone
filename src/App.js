@@ -14,6 +14,9 @@ import ForgotPassword from "./pages/ForgotPassword";
 //import components
 import Header from "./components/Header";
 
+//import ToastContainer
+import { ToastContainer } from "react-toastify";
+
 const App = () => {
   return (
     <>
@@ -26,6 +29,13 @@ const App = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
+      <ToastContainer
+        theme="dark"
+        position="top-right"
+        autoClose={2000}
+        closeOnClick
+        pauseOnHover={false}
+      />
     </>
   );
 };
