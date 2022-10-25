@@ -22,6 +22,11 @@ import { db } from "../firebase";
 import { serverTimestamp, setDoc, doc } from "firebase/firestore";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
+  //Password visibility:
+  const [showPassword, setShowPassword] = useState(false);
+
   //Getting data from the signup form:
   const [formData, setFormData] = useState({
     name: "",
@@ -36,11 +41,6 @@ const SignUp = () => {
       [e.target.id]: e.target.value,
     }));
   };
-
-  //Password visibility:
-  const [showPassword, setShowPassword] = useState(false);
-
-  const navigate = useNavigate();
 
   const onSubmit = async (e) => {
     e.preventDefault();
