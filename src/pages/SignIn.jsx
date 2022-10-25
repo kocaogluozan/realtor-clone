@@ -4,12 +4,23 @@ import React, { useState } from "react";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 
 //import Link
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 //import components
 import OAuth from "../components/OAuth";
 
+//import useNavigate
+import { useNavigate } from "react-router-dom";
+
+//import toast
+import { toast } from "react-toastify";
+
+//import firebase
+import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
+
 const SignIn = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const { email, password } = formData;
 
@@ -18,10 +29,25 @@ const SignIn = () => {
       ...prevState,
       [e.target.id]: e.target.value,
     }));
-    console.log(formData);
   };
 
-  const [showPassword, setShowPassword] = useState(false);
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredential.user) {
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error("Bad user credentials");
+    }
+  };
   return (
     <section>
       <h1 className="text-3xl text-center font-bold mt-6 ">Sign In</h1>
@@ -36,7 +62,7 @@ const SignIn = () => {
         </div>
         {/************ FORM ************/}
         <div className="w-full lg:w-[40%] md:w-[67%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             <input
               className="w-full px-4 py-2 text-xl text-gray-700 bg-white 
                       border-gray-300 rounded transition ease-in-out mb-6"
@@ -88,6 +114,7 @@ const SignIn = () => {
               </p>
             </div>
             <button
+              type="submit"
               className="w-full bg-blue-600 text-white px-7 py-3 text-sm 
                       font-medium uppercase rounded shadow-md hover:bg-blue-700 
                       transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800"
