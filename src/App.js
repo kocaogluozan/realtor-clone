@@ -13,6 +13,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 
 //import components
 import Header from "./components/Header";
+import PrivateRoute from "./components/PrivateRoute";
 
 //import ToastContainer
 import { ToastContainer } from "react-toastify";
@@ -27,7 +28,9 @@ const App = () => {
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<PrivateRoute />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
       </Routes>
       <ToastContainer
         theme="dark"

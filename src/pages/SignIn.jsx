@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
 
 //import Link
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 //import components
 import OAuth from "../components/OAuth";
@@ -50,7 +50,7 @@ const SignIn = () => {
   };
   return (
     <section>
-      <h1 className="text-3xl text-center font-bold mt-6 ">Sign In</h1>
+      <h1 className="text-3xl text-center font-bold mt-6">Sign In</h1>
       <div className="flex justify-center items-center flex-wrap px-6 py-12 max-w-6xl mx-auto">
         {/************ IMAGE ************/}
         <div className="md:w-[67%] lg:w-[50%] mb-12 md:mb-6">
