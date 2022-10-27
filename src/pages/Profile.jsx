@@ -3,8 +3,13 @@ import React, { useState } from "react";
 //import useNavigate
 import { useNavigate } from "react-router-dom";
 
+//import toast
+import { toast } from "react-toastify";
+
 //import firebase
-import { getAuth } from "firebase/auth";
+import { getAuth, updateProfile } from "firebase/auth";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -14,6 +19,7 @@ const Profile = () => {
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
   });
+  const [changeDetail, setChangeDetail] = useState(false);
 
   const { name, email } = formData;
 
@@ -21,6 +27,30 @@ const Profile = () => {
     //signout auth'ta tanımlı:
     auth.signOut();
     navigate("/");
+  };
+
+  //Editing the profile name:
+  const onChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+  };
+  //Editing the profile name on Firebase
+  const onSubmit = async () => {
+    try {
+      if (auth.currentUser.displayName !== name) {
+        //update display name in firebase auth
+        await updateProfile(auth.currentUser, { displayName: name });
+
+        //update display name in firestore
+        const docRef = doc(db, "users", auth.currentUser.uid);
+        await updateDoc(docRef, { name: name });
+      }
+      toast.success("Profile updated.");
+    } catch (error) {
+      toast.error("Couldn't update the user details.");
+    }
   };
   return (
     <section className="flex justify-center items-center flex-col max-w-6xl mx-auto">
@@ -31,10 +61,13 @@ const Profile = () => {
             type="text"
             id="name"
             value={name}
-            disabled
-            className="w-full text-xl px-4 py-2 text-gray-700 mb-6 
-                    bg-white border border-gray-300 rounded 
-                      transition ease-in-out"
+            disabled={!changeDetail}
+            className={`w-full text-xl px-4 py-2 text-gray-700 mb-6 
+            bg-white border border-gray-300 rounded 
+              transition ease-in-out ${
+                changeDetail && "bg-red-200 focus:bg-red-200"
+              }`}
+            onChange={onChange}
           />
           <input
             type="email"
@@ -52,8 +85,12 @@ const Profile = () => {
               <span
                 className="text-red-600 hover:text-red-700 transition ease-in-out 
                           duration-200 ml-1 cursor-pointer"
+                onClick={() => {
+                  changeDetail && onSubmit();
+                  setChangeDetail((prevState) => !prevState);
+                }}
               >
-                Edit
+                {changeDetail ? "Apply Changes" : "Edit"}
               </span>
             </p>
             <p
