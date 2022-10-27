@@ -1,5 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+//import NavLink,useNavigate
 import { NavLink, useNavigate } from "react-router-dom";
+
+//import firebase
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const navLinks = [
   { path: "home", display: "Home" },
@@ -8,8 +13,20 @@ const navLinks = [
 ];
 
 const Header = () => {
+  const [authanticated, setAuthenticated] = useState(false);
   const navigate = useNavigate();
 
+  const auth = getAuth();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAuthenticated(true);
+      } else {
+        setAuthenticated(false);
+      }
+    });
+  }, [auth]);
   return (
     <header className="bg-white py-[20px] border-b shadow-sm sticky top-0 ">
       <div className="container mx-auto flex justify-between items-center px-3">
@@ -27,17 +44,23 @@ const Header = () => {
               return (
                 <li key={index}>
                   <NavLink
-                    to={item.path}
+                    to={
+                      authanticated && item.display === "Sign in"
+                        ? "/profile"
+                        : item.path
+                    }
                     className={(navClass) => {
                       return `cursor-pointer py-[20px] text-md font-semibold
-                      border-b-[3px]  ${
-                        navClass.isActive
-                          ? "text-black border-b-red-500"
-                          : "text-gray-400 border-b-transparent"
-                      }`;
+                  border-b-[3px]  ${
+                    navClass.isActive
+                      ? "text-black border-b-red-500"
+                      : "text-gray-400 border-b-transparent"
+                  }`;
                     }}
                   >
-                    {item.display}
+                    {authanticated && item.display === "Sign in"
+                      ? "Profile"
+                      : item.display}
                   </NavLink>
                 </li>
               );
