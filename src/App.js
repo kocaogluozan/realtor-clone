@@ -10,6 +10,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
+import CreateListing from "./pages/CreateListing";
 
 //import components
 import Header from "./components/Header";
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/profile" element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
         </Route>
+        <Route path="/create-listing" element={<CreateListing />} />
       </Routes>
       <ToastContainer
         theme="dark"
